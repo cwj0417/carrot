@@ -35,7 +35,7 @@
     
     UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
     if ([statusBar respondsToSelector:@selector(setBackgroundColor:)]) {
-        statusBar.backgroundColor = [UIColor colorWithRed:1.00 green:0.40 blue:0.00 alpha:1.0];
+        statusBar.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:155.0f/255.0f blue:41.0f/255.0f alpha:1.0];
     }
 
     [self render];
