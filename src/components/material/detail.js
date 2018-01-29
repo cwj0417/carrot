@@ -1,10 +1,22 @@
 import React, {Component} from 'react'
+
 import {Text, View} from 'react-native'
+
+import {COLOR} from '../../config'
 
 export default class detail extends Component {
     static navigationOptions = ({navigation}) => {
         return {
-            title: navigation.state.params.name
+            title: navigation.state.params.name,
+            headerStyle: {
+                backgroundColor: COLOR.backgroundNormal
+            },
+            headerTitleStyle: {
+                color: COLOR.textLightNormal
+            },
+            headerBackTitleStyle: {
+                color: COLOR.textLightNormal
+            }
         }
     }
     render () {
