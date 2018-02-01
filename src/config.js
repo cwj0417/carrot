@@ -37,7 +37,7 @@ export const COLOR = {
     textNormal: '#5E5E5E',
     textEmpha: '#212121',
     textLightPrompt: '#EBEBEB',
-    textLightNormal: '#FFFFFF',
+    textLightNormal: '#f19835',
     backgroundDarker: '#D6D6D6',
     backgroundNormal: '#ff9400',
     backgroundLighter: '#FFFFFF',
