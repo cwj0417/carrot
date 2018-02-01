@@ -23,7 +23,7 @@ export default TabNavigator({
         navigationOptions: {
             tabBarLabel: '菜谱',
             tabBarIcon: () => (
-                <Image source={require('./assets/carrot.png')} style={{width: 26, height: 26}} />
+                <Image source={require('./assets/menu.png')} style={{width: 26, height: 26}} />
             )
         }
     },

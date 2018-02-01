@@ -12,6 +12,11 @@ export const STATUS_BAR_HEIGHT = 20
 export const NAV_BAR_HEIGHT = 64
 export const TAB_BAR_HEIGHT = 50
 
+// base_width, base_height, defaultPixel : 以 iphone6s 为默认标准进行适配
+export const BASE_HEIGHT = 667
+export const BASE_WIDTH = 375
+export const DEFAULT_PIXEL = 2
+
 export const ENVS = {
     production: {
         api_base_url: 'http://192.168.100.62',

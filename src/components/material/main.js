@@ -1,12 +1,45 @@
 import React, {Component} from 'react'
 
-import {Text, View, Image, StyleSheet} from 'react-native'
+import {Image, StyleSheet, Text, TextInput, View} from 'react-native'
 
-import {COLOR} from '../../config'
+import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../config'
 
-import {SearchBar} from 'antd-mobile'
+import {Icon} from 'native-base'
 
 export default class Main extends Component {
+
+    constructor (props) {
+        super(props)
+
+        this.state = {
+            filter: [{
+                name: '属性',
+                emun: [{
+                    name: '热性'
+                }, {
+                    name: '温性'
+                }]
+            }, {
+                name: '酸碱',
+                emun: [{
+                    name: '酸'
+                }, {
+                    name: '碱'
+                }]
+            }, {
+                name: '消化',
+                emun: [{
+                    name: '好'
+                }, {
+                    name: '差'
+                }]
+            }, {
+                name: '',
+                emun: []
+            }],
+            cur: ''
+        }
+    }
 
     static navigationOptions = () => {
         return {
@@ -20,13 +53,18 @@ export default class Main extends Component {
             headerTitle: (
                 <View style={style.headerTitle}>
                     <View style={style.headerLeft}>
-                        <Image style={style.icon} source={require('../../assets/reset.png')} />
+                        <Image style={style.icon} source={require('../../assets/reset.png')}/>
                     </View>
                     <View style={style.headerMiddle}>
-                        <SearchBar placeholder="Search" maxLength={8} />
+                        <View style={{marginBottom: 10, marginTop: 5, marginHorizontal: 15, backgroundColor: '#fff'}}>
+                            <View style={{height: 31, marginLeft: 10, flexDirection: 'row'}}>
+                                <Icon name="ios-search" style={{color: COLOR.backgroundNormal}}/>
+                                <TextInput placeholder="Search" style={{marginLeft: 10}}/>
+                            </View>
+                        </View>
                     </View>
                     <View style={style.headerRight}>
-                        <Image style={style.icon} source={require('../../assets/plus.png')} />
+                        <Image style={style.icon} source={require('../../assets/basket.png')}/>
                     </View>
                 </View>
             )
@@ -36,10 +74,20 @@ export default class Main extends Component {
     render() {
         return (
             <View style={style.wrap}>
+                <View style={style.filter}>
+                    {this.state.filter.map((filter, index) => (
+                        <Text onPress={() => this.setState({cur: filter.name})} style={style.filterItem} key={index}>{filter.name}</Text>
+                    ))}
+                </View>
+                <View style={style.filter}>
+                    {this.state.filter.filter(({name}) => name === this.state.cur)[0].emun.map((filter, index) => (
+                        <Text style={style.filterItem} key={index}>{filter.name}</Text>
+                    ))}
+                </View>
                 <Text>食材:</Text>
-                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '鸭子'})}>鸭子</Text>
-                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '鹦鹉'})}>鹦鹉</Text>
-                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '麻雀'})}>麻雀</Text>
+                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '番茄'})}>番茄</Text>
+                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '山药'})}>山药</Text>
+                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '香蕉'})}>香蕉</Text>
             </View>
         )
     }
@@ -47,8 +95,16 @@ export default class Main extends Component {
 
 const style = StyleSheet.create({
     wrap: {
+        backgroundColor: '#dedede',
+        height: SCREEN_HEIGHT - 113
+    },
+    filter: {
         backgroundColor: '#fff',
-        height: 300
+        flexDirection: 'row'
+    },
+    filterItem: {
+        padding: 5,
+        margin: 5
     },
     icon: {
         width: 24,
@@ -56,17 +112,18 @@ const style = StyleSheet.create({
         marginTop: 10
     },
     headerTitle: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        height: 44
     },
     headerLeft: {
-        flex: 1,
+        width: 44,
         alignItems: 'center'
     },
     headerMiddle: {
-        flex: 4
+        width: SCREEN_WIDTH - 88
     },
     headerRight: {
-        flex: 1,
+        width: 44,
         alignItems: 'center'
     }
 })
