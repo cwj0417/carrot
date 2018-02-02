@@ -42,8 +42,8 @@ export default class Main extends Component {
                             backgroundColor: '#fff',
                             borderRadius: 5
                         }}>
-                            <View style={{height: 31, marginLeft: 5, flexDirection: 'row'}}>
-                                <Icon name="ios-search" style={{color: COLOR.backgroundNormal}}/>
+                            <View style={{height: 31, marginLeft: 10, flexDirection: 'row'}}>
+                                <Icon name="ios-search" style={{color: COLOR.backgroundNormal, fontSize: 20, lineHeight: 31}}/>
                                 <TextInput placeholder="Search" style={{marginLeft: 10}}/>
                             </View>
                         </View>
@@ -57,15 +57,40 @@ export default class Main extends Component {
     }
 
     render() {
+        const toggleFilter = filter => {
+            let current = this.state.curFilter[this.state.cur.value] || []
+            let res = []
+            for (let item of this.state.cur.enum) {
+                let curHas = current.find(({name}) => name === item.name)
+                let targetHas = filter.name === item.name
+                if (curHas || targetHas) {
+                    if (!(curHas && targetHas)) {
+                        res.push(item)
+                    }
+                }
+            }
+            this.setState({curFilter: {...this.state.curFilter, [this.state.cur.value]: res}})
+        }
         return (
             <View style={style.wrap}>
                 <View style={style.filter}>
                     <ScrollView horizontal>
                         {this.state.filter.map((filter, index) => (
-                            <TouchableOpacity onPress={() => this.setState({cur: filter.name})} key={index}>
+                            <TouchableOpacity onPress={() => this.setState({cur: filter})} key={index}>
                                 <View
-                                    style={[style.filterItem, this.state.cur === filter.name ? style.filterParentActive : {}]}>
-                                    <Text>{filter.name}</Text>
+                                    style={[style.filterItem, this.state.cur.value === filter.value ? style.filterParentActive : {}]}>
+                                    <Text style={[style.filterItemText, this.state.cur.value === filter.value ? style.filterParentActiveText : {}]}>{filter.name}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+                <View style={style.filter}>
+                    <ScrollView horizontal>
+                        {this.state.filter.filter(({value}) => value === this.state.cur.value)[0].enum.map((filter, index) => (
+                            <TouchableOpacity onPress={() => toggleFilter(filter)} key={index}>
+                                <View style={[style.filterItem, {paddingHorizontal: 0, marginHorizontal: 17}, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
+                                    <Text style={[style.filterItemText, {color: '#999'}, this.state.cur && this.state.curFilter[this.state.cur.value] &&  this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
                                 </View>
                             </TouchableOpacity>
                         ))}
@@ -75,17 +100,7 @@ export default class Main extends Component {
                     height: 1,
                     width: SCREEN_WIDTH,
                     backgroundColor: '#f2f2f2'
-                }, {height: this.state.cur ? 1 : 0}]}/>
-                <View style={style.filter}>
-                    <ScrollView horizontal>
-                        {this.state.filter.filter(({name}) => name === this.state.cur)[0].emun.map((filter, index) => (
-                            <View style={[style.filterItem]} key={index}>
-                                <Text>{filter.name}</Text>
-                            </View>
-                        ))}
-                    </ScrollView>
-                </View>
-                <Text>食材:</Text>
+                }]}/>
                 <Text onPress={() => this.props.navigation.navigate('Detail', {name: '番茄'})}>番茄</Text>
                 <Text onPress={() => this.props.navigation.navigate('Detail', {name: '山药'})}>山药</Text>
                 <Text onPress={() => this.props.navigation.navigate('Detail', {name: '香蕉'})}>香蕉</Text>
@@ -104,17 +119,36 @@ const style = StyleSheet.create({
         flexDirection: 'row'
     },
     filterItem: {
-        padding: 5,
-        margin: 5,
-        borderRadius: 5
+        padding: 10,
+        paddingVertical: 5,
+        margin: 7,
+        marginVertical: 5,
+        borderRadius: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: 'transparent'
+    },
+    filterItemText: {
+        color: COLOR.textNormal,
+        fontSize: 14
     },
     filterParentActive: {
         backgroundColor: COLOR.textLightNormal
     },
+    filterParentActiveText: {
+        color: '#fff'
+    },
+    filterChildActive: {
+        borderBottomWidth: 1,
+        borderBottomColor: COLOR.textLightNormal,
+        borderRadius: 0
+    },
+    filterChildActiveText: {
+        color: COLOR.textNormal
+    },
     icon: {
         width: 24,
         height: 24,
-        marginTop: 10
+        marginTop: 7
     },
     headerTitle: {
         flexDirection: 'row',

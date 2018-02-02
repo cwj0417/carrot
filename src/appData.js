@@ -5,8 +5,7 @@ const eq = x => n => n === x
 export const filter = [{
     name: '属性',
     value: 'property',
-    field: 'property',
-    emun: [{
+    enum: [{
         name: '热性',
         desc: eq(5)
     }, {
@@ -24,9 +23,8 @@ export const filter = [{
     }]
 }, {
     name: '酸碱',
-    value: 'acidBase',
-    field: 'acid',
-    emun: [{
+    value: 'acid',
+    enum: [{
         name: '酸性',
         desc: gt(8)
     }, {
@@ -39,8 +37,7 @@ export const filter = [{
 }, {
     name: '消化',
     value: 'digestion',
-    field: 'digestion',
-    emun: [{
+    enum: [{
         name: '易消化',
         desc: eq(3)
     }, {
@@ -53,8 +50,7 @@ export const filter = [{
 }, {
     name: '嘌呤',
     value: 'purine',
-    field: 'purine',
-    emun: [{
+    enum: [{
         name: '高嘌呤',
         desc: gt(200)
     }, {
@@ -67,7 +63,7 @@ export const filter = [{
 }, {
     name: '测试',
     value: 'test1',
-    emun: [{
+    enum: [{
         name: '测试1',
         desc: eq(0)
     }, {
@@ -82,8 +78,8 @@ export const filter = [{
     }]
 }, {
     name: '测试长长长',
-    value: 'test1',
-    emun: [{
+    value: 'test21',
+    enum: [{
         name: '好好',
         desc: eq(0)
     }, {
@@ -98,8 +94,8 @@ export const filter = [{
     }]
 }, {
     name: '测试超过最大宽度',
-    value: 'test1',
-    emun: [{
+    value: 'test13',
+    enum: [{
         name: '诶嘿嘿',
         desc: eq(0)
     }, {
@@ -114,5 +110,5 @@ export const filter = [{
     }]
 }, {
     name: '',
-    emun: []
+    enum: []
 }]

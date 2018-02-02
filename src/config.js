@@ -34,7 +34,7 @@ export const COLOR = {
     theme: '#f27737',
     favored: '#C71A22',
     textPrompt: '#929292',
-    textNormal: '#5E5E5E',
+    textNormal: '#333333',
     textEmpha: '#212121',
     textLightPrompt: '#EBEBEB',
     textLightNormal: '#f19835',
