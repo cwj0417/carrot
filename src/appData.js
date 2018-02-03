@@ -1,18 +1,15 @@
 const gt = x => n => n >= x
 const lt = x => n => n < x
-const bt = (x, y) => n => n >=x && n < y
+const bt = (x, y) => n => n >= x && n < y
 const eq = x => n => n === x
 export const filter = [{
-    name: '属性',
-    value: 'property',
+    name: '性质',
+    value: 'nature',
     enum: [{
         name: '热性',
-        desc: eq(5)
-    }, {
-        name: '温性',
         desc: eq(4)
     }, {
-        name: '中性',
+        name: '温性',
         desc: eq(3)
     }, {
         name: '凉性',
@@ -35,17 +32,17 @@ export const filter = [{
         desc: lt(6)
     }]
 }, {
-    name: '消化',
-    value: 'digestion',
+    name: '糖份',
+    value: 'sugar',
     enum: [{
-        name: '易消化',
-        desc: eq(3)
+        name: '高糖',
+        desc: gt(300)
     }, {
-        name: '消化一般',
-        desc: eq(2)
+        name: '中糖',
+        desc: bt(200, 300)
     }, {
-        name: '难消化',
-        desc: eq(1)
+        name: '低糖',
+        desc: lt(100)
     }]
 }, {
     name: '嘌呤',
@@ -61,52 +58,17 @@ export const filter = [{
         desc: lt(100)
     }]
 }, {
-    name: '测试',
-    value: 'test1',
+    name: '热量',
+    value: 'heat',
     enum: [{
-        name: '测试1',
-        desc: eq(0)
+        name: '高热量',
+        desc: gt(500)
     }, {
-        name: '很长的名字',
-        desc: eq(0)
+        name: '中热量',
+        desc: bt(100, 500)
     }, {
-        name: '特别长',
-        desc: eq(0)
-    }, {
-        name: '我的描述有八个字',
-        desc: eq(0)
-    }]
-}, {
-    name: '测试长长长',
-    value: 'test21',
-    enum: [{
-        name: '好好',
-        desc: eq(0)
-    }, {
-        name: '惹',
-        desc: eq(0)
-    }, {
-        name: '饿饿长',
-        desc: eq(0)
-    }, {
-        name: '我的描述有十几个字呢',
-        desc: eq(0)
-    }]
-}, {
-    name: '测试超过最大宽度',
-    value: 'test13',
-    enum: [{
-        name: '诶嘿嘿',
-        desc: eq(0)
-    }, {
-        name: '哼',
-        desc: eq(0)
-    }, {
-        name: '比比',
-        desc: eq(0)
-    }, {
-        name: '哦哦哦',
-        desc: eq(0)
+        name: '低热量',
+        desc: lt(100)
     }]
 }, {
     name: '',

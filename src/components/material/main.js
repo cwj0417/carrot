@@ -1,16 +1,25 @@
 import React, {Component} from 'react'
 
-import {Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
+
+import {connect} from 'react-redux'
 
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../config'
+
+import {Img} from '../../common/index'
 
 import {Icon} from 'native-base'
 
 import {filter} from '../../appData'
 
-export default class Main extends Component {
+import {material_init, material_list_set} from '../../store/action/index'
+
+import {categories} from '../../coreData/meterial'
+
+class Main extends Component {
 
     constructor(props) {
+
         super(props)
 
         this.state = {
@@ -18,6 +27,10 @@ export default class Main extends Component {
             cur: '',
             curFilter: {}
         }
+    }
+
+    componentDidMount() {
+        this.props.material_init()
     }
 
     static navigationOptions = () => {
@@ -43,7 +56,8 @@ export default class Main extends Component {
                             borderRadius: 5
                         }}>
                             <View style={{height: 31, marginLeft: 10, flexDirection: 'row'}}>
-                                <Icon name="ios-search" style={{color: COLOR.backgroundNormal, fontSize: 20, lineHeight: 31}}/>
+                                <Icon name="ios-search"
+                                      style={{color: COLOR.backgroundNormal, fontSize: 20, lineHeight: 31}}/>
                                 <TextInput placeholder="Search" style={{marginLeft: 10}}/>
                             </View>
                         </View>
@@ -78,8 +92,9 @@ export default class Main extends Component {
                         {this.state.filter.map((filter, index) => (
                             <TouchableOpacity onPress={() => this.setState({cur: filter})} key={index}>
                                 <View
-                                    style={[style.filterItem, this.state.cur.value === filter.value ? style.filterParentActive : {}]}>
-                                    <Text style={[style.filterItemText, this.state.cur.value === filter.value ? style.filterParentActiveText : {}]}>{filter.name}</Text>
+                                    style={[style.filterItem, filter.name ? {} : {display: 'none'}, this.state.cur.value === filter.value ? style.filterParentActive : {}]}>
+                                    <Text
+                                        style={[style.filterItemText, this.state.cur.value === filter.value ? style.filterParentActiveText : {}]}>{filter.name}</Text>
                                 </View>
                             </TouchableOpacity>
                         ))}
@@ -89,29 +104,78 @@ export default class Main extends Component {
                     <ScrollView horizontal>
                         {this.state.filter.filter(({value}) => value === this.state.cur.value)[0].enum.map((filter, index) => (
                             <TouchableOpacity onPress={() => toggleFilter(filter)} key={index}>
-                                <View style={[style.filterItem, {paddingHorizontal: 0, marginHorizontal: 17}, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
-                                    <Text style={[style.filterItemText, {color: '#999'}, this.state.cur && this.state.curFilter[this.state.cur.value] &&  this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
+                                <View style={[style.filterItem, {
+                                    paddingHorizontal: 0,
+                                    marginHorizontal: 17
+                                }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
+                                    <Text
+                                        style={[style.filterItemText, {color: '#999'}, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
                                 </View>
                             </TouchableOpacity>
                         ))}
                     </ScrollView>
                 </View>
                 <View style={[{
-                    height: 1,
+                    height: 4,
                     width: SCREEN_WIDTH,
                     backgroundColor: '#f2f2f2'
                 }]}/>
-                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '番茄'})}>番茄</Text>
-                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '山药'})}>山药</Text>
-                <Text onPress={() => this.props.navigation.navigate('Detail', {name: '香蕉'})}>香蕉</Text>
+                <ScrollView>
+                    {Object.entries(this.props.list).map(([key, value]) => (
+                        <View style={style.detailWrap} key={key}>
+                            <View style={style.cardTitleWrap}>
+                                <Text style={style.cardTitle}>{categories[key]}</Text>
+                                <Icon name="md-arrow-dropup"
+                                      style={{fontSize: 16, paddingLeft: 10, color: COLOR.textLightNormal}}/>
+                            </View>
+                            <View style={style.cardWrap}>
+                                <FlatList
+                                    data={value}
+                                    keyExtractor={item => item.en}
+                                    numColumns={4}
+                                    renderItem={({item}) => (
+                                        <View key={item.en} style={style.cardItemWrap}>
+                                            <Img
+                                                onPress={() => this.props.navigation.navigate('Detail', {name: item.name})}
+                                                style={style.cardImg} source={item.en}/>
+                                            <View style={style.itemTextWrap}>
+                                                <Image style={[style.itemTextImg, {flex: 1}]}
+                                                       source={require('../../assets/menu.png')}/>
+                                                <Text
+                                                    style={[style.itemTextText, {flex: 3, textAlign: 'center'}]}
+                                                    onPress={() => this.props.navigation.navigate('Detail', {name: item.name})}>{item.name}</Text>
+                                                <Icon
+                                                    style={[{fontSize: 14, color: COLOR.textLightNormal}, {flex: 1}]}
+                                                    name="ios-add-circle-outline"/>
+                                            </View>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
+                    ))}
+                </ScrollView>
             </View>
         )
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        list: state.material.list
+    }
+}
+
+const mapDispatchToProps = {
+    material_init,
+    material_list_set
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main)
+
 const style = StyleSheet.create({
     wrap: {
-        backgroundColor: '#dedede',
+        backgroundColor: '#fff',
         height: SCREEN_HEIGHT - 113
     },
     filter: {
@@ -164,5 +228,47 @@ const style = StyleSheet.create({
     headerRight: {
         width: 44,
         alignItems: 'center'
+    },
+    detailWrap: {},
+    cardTitleWrap: {
+        flexDirection: 'row',
+        borderLeftWidth: 5,
+        borderLeftColor: COLOR.textLightNormal,
+        paddingLeft: 10,
+        marginTop: 10,
+        marginLeft: 10
+    },
+    cardTitle: {
+        fontSize: 16
+    },
+    cardWrap: {
+        backgroundColor: '#f2f2f2',
+        flexDirection: 'row',
+        marginTop: 10
+    },
+    cardItemWrap: {
+        width: (SCREEN_WIDTH - 50) / 4,
+        backgroundColor: '#fff',
+        margin: 10,
+        marginRight: 0,
+        padding: 10
+    },
+    cardImg: {
+        width: SCREEN_WIDTH / 4 - 30,
+        height: SCREEN_WIDTH / 4 - 30
+    },
+    itemTextWrap: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 5
+    },
+    itemTextText: {
+        fontSize: 12,
+        color: '#999'
+    },
+    itemTextImg: {
+        width: 12,
+        height: 12
     }
 })
