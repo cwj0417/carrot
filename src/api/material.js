@@ -7,12 +7,21 @@ export const api_material = {
         return groupBy(list, 'cat')
     },
     filter (filter) {
-        let res = list
-        for (let [key, value] of Object.entries(filter)) {
-            for (let {desc} of value) {
-                res = res.filter(item => desc(item[key]))
+        let res = list.filter(item => {
+            let tag = true
+            for (let [key, value] of Object.entries(filter)) {
+                let tmp = false
+                for (let {desc} of value) {
+                    if (desc(item[key])) {
+                        tmp = true
+                    }
+                }
+                if (!tmp && value.length) {
+                    tag = false
+                }
             }
-        }
+            return tag
+        })
         return groupBy(res, 'cat')
     }
 }
