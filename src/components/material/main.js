@@ -12,7 +12,7 @@ import {Icon} from 'native-base'
 
 import {filter} from '../../appData'
 
-import {material_init, material_list_set} from '../../store/action/index'
+import {material_init, material_list_set, material_filter} from '../../store/action/index'
 
 import {categories} from '../../coreData/meterial'
 
@@ -71,6 +71,11 @@ class Main extends Component {
     }
 
     render() {
+        const filterData = () => {
+            setTimeout(() => {
+                this.props.material_filter(this.state.curFilter)
+            })
+        }
         const toggleFilter = filter => {
             let current = this.state.curFilter[this.state.cur.value] || []
             let res = []
@@ -84,6 +89,7 @@ class Main extends Component {
                 }
             }
             this.setState({curFilter: {...this.state.curFilter, [this.state.cur.value]: res}})
+            filterData()
         }
         return (
             <View style={style.wrap}>
@@ -168,7 +174,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
     material_init,
-    material_list_set
+    material_list_set,
+    material_filter
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)

@@ -11,3 +11,9 @@ export const material_init = () => {
         dispatch(material_list_set(api_material.init()))
     }
 }
+
+export const material_filter = filter => {
+    return dispatch => {
+        dispatch(material_list_set(api_material.filter(filter)))
+    }
+}

@@ -16,7 +16,7 @@ export const filter = [{
         desc: eq(2)
     }, {
         name: '寒性',
-        desc: eq(2)
+        desc: eq(1)
     }]
 }, {
     name: '酸碱',
@@ -39,7 +39,7 @@ export const filter = [{
         desc: gt(300)
     }, {
         name: '中糖',
-        desc: bt(200, 300)
+        desc: bt(100, 300)
     }, {
         name: '低糖',
         desc: lt(100)

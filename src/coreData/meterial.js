@@ -36,61 +36,136 @@ export const properties = {
 export const list = [{
     name: '燕麦',
     en: 'oats',
-    cat: 'grain'
+    cat: 'grain',
+    nature: 3,
+    acid: 7,
+    sugar: 50,
+    purine: 30,
+    heat: 3
 }, {
     name: '大米',
     en: 'rice',
-    cat: 'grain'
+    cat: 'grain',
+    nature: 2,
+    acid: 7,
+    sugar: 105,
+    purine: 30,
+    heat: 105
 }, {
     name: '猪肉',
     en: 'pork',
-    cat: 'meat'
+    cat: 'meat',
+    nature: 4,
+    acid: 5,
+    sugar: 50,
+    purine: 160,
+    heat: 310
 }, {
     name: '牛肉',
     en: 'beef',
-    cat: 'meat'
+    cat: 'meat',
+    nature: 4,
+    acid: 5,
+    sugar: 50,
+    purine: 190,
+    heat: 340
 }, {
     name: '鸭肉',
     en: 'duck',
-    cat: 'meat'
+    cat: 'meat',
+    nature: 2,
+    acid: 5,
+    sugar: 50,
+    purine: 132,
+    heat: 230
 }, {
     name: '鸡肉',
     en: 'chicken',
-    cat: 'meat'
+    cat: 'meat',
+    nature: 3,
+    acid: 5,
+    sugar: 50,
+    purine: 131,
+    heat: 223
 }, {
     name: '羊肉',
     en: 'mutton',
-    cat: 'meat'
+    cat: 'meat',
+    nature: 4,
+    acid: 4,
+    sugar: 48,
+    purine: 157,
+    heat: 304
 }, {
     name: '苹果',
     en: 'apple',
-    cat: 'fruit'
+    cat: 'fruit',
+    nature: 3,
+    acid: 8.5,
+    sugar: 208,
+    purine: 25,
+    heat: 5
 }, {
     name: '桃子',
     en: 'peach',
-    cat: 'fruit'
+    cat: 'fruit',
+    nature: 3,
+    acid: 8.5,
+    sugar: 140,
+    purine: 26,
+    heat: 16
 }, {
     name: '白菜',
     en: 'cabbage',
-    cat: 'vegetable'
+    cat: 'vegetable',
+    nature: 3,
+    acid: 7,
+    sugar: 50,
+    purine: 23,
+    heat: 36
 }, {
     name: '菠菜',
     en: 'spinach',
-    cat: 'vegetable'
+    cat: 'vegetable',
+    nature: 3,
+    acid: 7,
+    sugar: 50,
+    purine: 34,
+    heat: 38
 }, {
     name: '豆腐',
     en: 'curd',
-    cat: 'beanProduct'
+    cat: 'beanProduct',
+    nature: 2,
+    acid: 6,
+    sugar: 50,
+    purine: 106,
+    heat: 5
 }, {
     name: '豆皮',
     en: 'rosa',
-    cat: 'beanProduct'
+    cat: 'beanProduct',
+    nature: 3,
+    acid: 7,
+    sugar: 50,
+    purine: 205,
+    heat: 6
 }, {
     name: '带鱼',
     en: 'hairtail',
-    cat: 'seaFood'
+    cat: 'seaFood',
+    nature: 3,
+    acid: 7,
+    sugar: 50,
+    purine: 3500,
+    heat: 108
 }, {
     name: '甜虾',
     en: 'amaebi',
-    cat: 'seaFood'
+    cat: 'seaFood',
+    nature: 2,
+    acid: 7,
+    sugar: 50,
+    purine: 1589,
+    heat: 50
 }]
