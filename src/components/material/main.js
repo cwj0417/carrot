@@ -31,9 +31,13 @@ class Main extends Component {
 
     componentDidMount() {
         this.props.material_init()
+        this.setState({cur: this.state.filter[0]})
     }
 
     static navigationOptions = () => {
+        const search = txt => {
+            console.warn(txt)
+        }
         return {
             title: '食材',
             headerStyle: {
@@ -58,7 +62,7 @@ class Main extends Component {
                             <View style={{height: 31, marginLeft: 10, flexDirection: 'row'}}>
                                 <Icon name="ios-search"
                                       style={{color: COLOR.backgroundNormal, fontSize: 20, lineHeight: 31}}/>
-                                <TextInput placeholder="Search" style={{marginLeft: 10}}/>
+                                <TextInput onEndEditing={txt => search(txt)} placeholder="Search" style={{marginLeft: 10}}/>
                             </View>
                         </View>
                     </View>
