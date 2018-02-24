@@ -12,7 +12,7 @@ import {Icon} from 'native-base'
 
 import {filter} from '../../appData'
 
-import {material_init, material_list_set, material_filter} from '../../store/action/index'
+import {material_filter, material_init, material_list_set} from '../../store/action/index'
 
 import {categories} from '../../coreData/meterial'
 
@@ -25,7 +25,8 @@ class Main extends Component {
         this.state = {
             filter,
             cur: '',
-            curFilter: {}
+            curFilter: {},
+            statusExpended: true
         }
     }
 
@@ -62,7 +63,7 @@ class Main extends Component {
                             <View style={{height: 31, marginLeft: 10, flexDirection: 'row'}}>
                                 <Icon name="ios-search"
                                       style={{color: COLOR.backgroundNormal, fontSize: 20, lineHeight: 31}}/>
-                                <TextInput onEndEditing={txt => search(txt)} placeholder="Search" style={{marginLeft: 10}}/>
+                                <TextInput placeholder="Search" style={{marginLeft: 10}}/>
                             </View>
                         </View>
                     </View>
@@ -95,6 +96,35 @@ class Main extends Component {
             this.setState({curFilter: {...this.state.curFilter, [this.state.cur.value]: res}})
             filterData()
         }
+        const reverse = () => {
+            let reversed = []
+            if (this.state.curFilter[this.state.cur.value]) {
+                for (let item of this.state.cur.enum) {
+                    if (!this.state.curFilter[this.state.cur.value].find(({name}) => name === item.name)) {
+                        reversed.push(item)
+                    }
+                }
+            } else {
+                reversed = this.state.cur.enum
+            }
+            this.setState({curFilter: {...this.state.curFilter, [this.state.cur.value]: reversed}})
+            filterData()
+        }
+        const removeCondition = (key, item) => {
+            this.setState({
+                curFilter: {
+                    ...this.state.curFilter,
+                    [key]: this.state.curFilter[key].filter(({name}) => name !== item.name)
+                }
+            })
+            filterData()
+        }
+        const isEmpty = (filter) => {
+            for (let key in filter) {
+                if (filter[key].length) return false
+            }
+            return true
+        }
         return (
             <View style={style.wrap}>
                 <View style={style.filter}>
@@ -111,6 +141,11 @@ class Main extends Component {
                     </ScrollView>
                 </View>
                 <View style={style.filter}>
+                    <TouchableOpacity onPress={reverse}>
+                        <View style={[style.filterItem]}>
+                            <Icon style={[style.filterItemText, style.swap, {fontSize: 17}]} name="ios-swap"/>
+                        </View>
+                    </TouchableOpacity>
                     <ScrollView horizontal>
                         {this.state.filter.filter(({value}) => value === this.state.cur.value)[0].enum.map((filter, index) => (
                             <TouchableOpacity onPress={() => toggleFilter(filter)} key={index}>
@@ -119,11 +154,75 @@ class Main extends Component {
                                     marginHorizontal: 17
                                 }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
                                     <Text
-                                        style={[style.filterItemText, {color: '#999'}, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
+                                        style={[style.filterItemText, {
+                                            color: '#999',
+                                            fontSize: 17
+                                        }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
                                 </View>
                             </TouchableOpacity>
                         ))}
                     </ScrollView>
+                </View>
+                <View style={[style.statusWrap, isEmpty(this.state.curFilter) ? {display: 'none'} : {}]}>
+                    <View style={style.statusDisplay}>
+                        {this.state.statusExpended && (
+                            <View style={style.statusDisplayExtended}>
+                                {Object.keys(this.state.curFilter).map(key => {
+                                    return this.state.curFilter[key].map(item => (
+                                        <TouchableOpacity key={item.name} onPress={() => {
+                                            removeCondition(key, item)
+                                        }}>
+                                            <View style={{flexDirection: 'row', marginBottom: 15}}>
+                                                <Icon style={[style.statusDisplayText, {paddingRight: 4}]}
+                                                      name="ios-remove-circle-outline"/>
+                                                <Text
+                                                    style={[style.statusDisplayText, {paddingRight: 8}]}>{item.name}</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    ))
+                                })}
+                            </View>
+                        ) || (
+                            <ScrollView horizontal style={style.statusDisplayExtended}>
+                                {Object.keys(this.state.curFilter).map(key => {
+                                    return this.state.curFilter[key].map(item => (
+                                        <View style={{flexDirection: 'row', marginBottom: 15}} key={item.name}>
+                                            <TouchableOpacity onPress={() => {
+                                                removeCondition(key, item)
+                                            }}>
+                                                <Icon style={[style.statusDisplayText, {paddingRight: 4}]}
+                                                      name="ios-remove-circle-outline"/>
+                                            </TouchableOpacity>
+                                            <Text
+                                                style={[style.statusDisplayText, {paddingRight: 8}]}>{item.name}</Text>
+                                        </View>
+                                    ))
+                                })}
+                            </ScrollView>
+                        )}
+                    </View>
+                    <View style={style.statusTagManage}>
+                        <View style={{flex: 1}}>
+                            <TouchableOpacity
+                                onPress={() => this.setState(({statusExpended}) => ({statusExpended: !statusExpended}))}>
+                                <Icon
+                                    style={[style.statusDisplayText, {fontSize: 24}, this.state.statusExpended ? {} : {display: 'none'}]}
+                                    name="ios-arrow-round-up"/>
+                                <Icon
+                                    style={[style.statusDisplayText, {fontSize: 24}, this.state.statusExpended ? {display: 'none'} : {}]}
+                                    name="ios-arrow-round-down"/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{flex: 3}}>
+                            <TextInput/>
+                        </View>
+                        <View style={{flex: 2}}>
+                            <Text style={[style.statusDisplayText, {fontSize: 16, flex: 1}]}>设为标签</Text>
+                        </View>
+                        <View style={{flex: 1}}>
+                            <Icon style={[style.statusDisplayText, {fontSize: 24}]} name="ios-code-working"/>
+                        </View>
+                    </View>
                 </View>
                 <View style={[{
                     height: 4,
@@ -136,13 +235,14 @@ class Main extends Component {
                             <View style={style.cardTitleWrap}>
                                 <Text style={style.cardTitle}>{categories[key]}</Text>
                                 <Icon name="md-arrow-dropup"
-                                      style={{fontSize: 16, paddingLeft: 10, color: COLOR.textLightNormal}}/>
+                                      style={{fontSize: 18, paddingLeft: 8, color: COLOR.textLightNormal}}/>
                             </View>
                             <View style={style.cardWrap}>
                                 <FlatList
+                                    columnWrapperStyle={{borderTopWidth: 1, borderTopColor: '#f2f2f2'}}
                                     data={value}
                                     keyExtractor={item => item.en}
-                                    numColumns={4}
+                                    numColumns={3}
                                     renderItem={({item}) => (
                                         <View key={item.en} style={style.cardItemWrap}>
                                             <Img
@@ -155,7 +255,7 @@ class Main extends Component {
                                                     style={[style.itemTextText, {flex: 3, textAlign: 'center'}]}
                                                     onPress={() => this.props.navigation.navigate('Detail', {name: item.name})}>{item.name}</Text>
                                                 <Icon
-                                                    style={[{fontSize: 14, color: COLOR.textLightNormal}, {flex: 1}]}
+                                                    style={[{fontSize: 18, color: COLOR.textLightNormal}, {flex: 1}]}
                                                     name="ios-add-circle-outline"/>
                                             </View>
                                         </View>
@@ -184,27 +284,35 @@ const mapDispatchToProps = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
 
+const PADDING = 12
+
 const style = StyleSheet.create({
     wrap: {
         backgroundColor: '#fff',
-        height: SCREEN_HEIGHT - 113
+        height: SCREEN_HEIGHT - 113,
     },
     filter: {
         backgroundColor: '#fff',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        padding: PADDING,
+        borderBottomColor: '#f2f2f2',
+        borderBottomWidth: 1
     },
     filterItem: {
-        padding: 10,
-        paddingVertical: 5,
-        margin: 7,
-        marginVertical: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+        marginHorizontal: 2,
+        marginVertical: 1,
         borderRadius: 15,
         borderBottomWidth: 1,
         borderBottomColor: 'transparent'
     },
     filterItemText: {
         color: COLOR.textNormal,
-        fontSize: 14
+        fontSize: 18
+    },
+    swap: {
+        color: COLOR.textLightNormal
     },
     filterParentActive: {
         backgroundColor: COLOR.textLightNormal
@@ -240,33 +348,67 @@ const style = StyleSheet.create({
         width: 44,
         alignItems: 'center'
     },
-    detailWrap: {},
+    statusWrap: {
+        marginHorizontal: 12,
+        marginTop: 15,
+        marginBottom: 20,
+        borderRadius: 3,
+        backgroundColor: COLOR.backgroundLighter
+    },
+    statusDisplay: {
+        paddingLeft: 10,
+        paddingRight: 2,
+        paddingTop: 20,
+        paddingBottom: 5
+    },
+    statusDisplayText: {
+        fontSize: 17,
+        color: '#fff',
+        fontWeight: '500'
+    },
+    statusDisplayExtended: {
+        flexDirection: 'row',
+        flexWrap: "wrap"
+    },
+    statusTagManage: {
+        height: 40,
+        backgroundColor: COLOR.backgroundDarker,
+        flexDirection: 'row',
+        padding: 10
+    },
+    detailWrap: {
+        borderTopWidth: 1,
+        borderTopColor: '#f2f2f2'
+    },
     cardTitleWrap: {
         flexDirection: 'row',
-        borderLeftWidth: 5,
+        height: 18,
+        borderLeftWidth: 4,
         borderLeftColor: COLOR.textLightNormal,
-        paddingLeft: 10,
-        marginTop: 10,
-        marginLeft: 10
+        paddingLeft: 12,
+        margin: 15,
+        marginBottom: 8
     },
     cardTitle: {
-        fontSize: 16
+        fontSize: 18
     },
     cardWrap: {
-        backgroundColor: '#f2f2f2',
+        backgroundColor: '#fff',
         flexDirection: 'row',
         marginTop: 10
     },
     cardItemWrap: {
-        width: (SCREEN_WIDTH - 50) / 4,
+        width: (SCREEN_WIDTH - 2) / 3,
         backgroundColor: '#fff',
-        margin: 10,
-        marginRight: 0,
-        padding: 10
+        marginTop: 10,
+        marginBottom: 15,
+        padding: 20,
+        borderRightColor: '#f2f2f2',
+        borderRightWidth: 1
     },
     cardImg: {
-        width: SCREEN_WIDTH / 4 - 30,
-        height: SCREEN_WIDTH / 4 - 30
+        width: (SCREEN_WIDTH - 2) / 3 - 40,
+        height: (SCREEN_WIDTH - 2) / 3 - 40
     },
     itemTextWrap: {
         flexDirection: 'row',
@@ -275,11 +417,11 @@ const style = StyleSheet.create({
         paddingVertical: 5
     },
     itemTextText: {
-        fontSize: 12,
+        fontSize: 16,
         color: '#999'
     },
     itemTextImg: {
-        width: 12,
-        height: 12
+        width: 16,
+        height: 16
     }
 })
