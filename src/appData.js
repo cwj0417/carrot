@@ -7,9 +7,12 @@ export const filter = [{
     value: 'nature',
     enum: [{
         name: '热性',
-        desc: eq(4)
+        desc: eq(5)
     }, {
         name: '温性',
+        desc: eq(4)
+    }, {
+        name: '平性',
         desc: eq(3)
     }, {
         name: '凉性',
