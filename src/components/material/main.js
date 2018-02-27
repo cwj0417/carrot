@@ -127,7 +127,7 @@ class Main extends Component {
         }
         return (
             <View style={style.wrap}>
-                <View style={style.filter}>
+                <View style={[style.filter, {paddingLeft: 0, marginLeft: 12}]}>
                     <ScrollView horizontal>
                         {this.state.filter.map((filter, index) => (
                             <TouchableOpacity onPress={() => this.setState({cur: filter})} key={index}>
@@ -143,7 +143,7 @@ class Main extends Component {
                 <View style={style.filter}>
                     <TouchableOpacity onPress={reverse}>
                         <View style={[style.filterItem]}>
-                            <Icon style={[style.filterItemText, style.swap, {fontSize: 17}]} name="ios-swap"/>
+                            <Icon style={[style.filterItemText, style.swap, {fontSize: 19, paddingLeft: 18, paddingRight: 6}]} name="ios-swap"/>
                         </View>
                     </TouchableOpacity>
                     <ScrollView horizontal>
@@ -151,12 +151,12 @@ class Main extends Component {
                             <TouchableOpacity onPress={() => toggleFilter(filter)} key={index}>
                                 <View style={[style.filterItem, {
                                     paddingHorizontal: 0,
-                                    marginHorizontal: 17
+                                    marginHorizontal: 12
                                 }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
                                     <Text
                                         style={[style.filterItemText, {
                                             color: '#999',
-                                            fontSize: 17
+                                            fontSize: 19
                                         }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
                                 </View>
                             </TouchableOpacity>
@@ -173,10 +173,10 @@ class Main extends Component {
                                             removeCondition(key, item)
                                         }}>
                                             <View style={{flexDirection: 'row', marginBottom: 15}}>
-                                                <Icon style={[style.statusDisplayText, {paddingRight: 4}]}
+                                                <Icon style={[style.statusDisplayText, {paddingRight: 6}]}
                                                       name="ios-remove-circle-outline"/>
                                                 <Text
-                                                    style={[style.statusDisplayText, {paddingRight: 8}]}>{item.name}</Text>
+                                                    style={[style.statusDisplayText, {paddingRight: 12}]}>{item.name}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     ))
@@ -309,7 +309,7 @@ const style = StyleSheet.create({
     },
     filterItemText: {
         color: COLOR.textNormal,
-        fontSize: 18
+        fontSize: 20
     },
     swap: {
         color: COLOR.textLightNormal
@@ -362,7 +362,7 @@ const style = StyleSheet.create({
         paddingBottom: 5
     },
     statusDisplayText: {
-        fontSize: 17,
+        fontSize: 19,
         color: '#fff',
         fontWeight: '500'
     },
