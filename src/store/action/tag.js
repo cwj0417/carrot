@@ -8,7 +8,12 @@ export const tag_list_set = payload => ({
 
 export const tag_init = () => {
     return dispatch => {
-        dispatch(tag_list_set())
+        api_tag.init()
+            .then(res => {
+                dispatch(tag_list_set(res))
+            }, err => {
+                dispatch(tag_list_set([]))
+            })
     }
 }
 

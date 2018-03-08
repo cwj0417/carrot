@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 
-import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, Button, TouchableOpacity, View} from 'react-native'
 
 import {connect} from 'react-redux'
+
+import Modal from 'react-native-modalbox'
 
 import {COLOR, SCREEN_HEIGHT, SCREEN_WIDTH} from '../../config'
 
@@ -188,9 +190,11 @@ class Main extends Component {
                         <View style={{flex: 2}}>
                             <Text style={[style.statusDisplayText, {fontSize: 16, flex: 1}]}>设为标签</Text>
                         </View>
-                        <View style={{flex: 1}}>
-                            <Icon style={[style.statusDisplayText, {fontSize: 24}]} name="ios-code-working"/>
-                        </View>
+                        <TouchableOpacity onPress={() => this.refs.modal.open()}>
+                            <View style={{flex: 1}}>
+                                <Icon style={[style.statusDisplayText, {fontSize: 24}]} name="ios-code-working"/>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <ScrollView>
@@ -271,6 +275,10 @@ class Main extends Component {
                         </View>
                     ))}
                 </ScrollView>
+                <Modal style={{width: SCREEN_WIDTH * 0.8, height: SCREEN_HEIGHT * 0.6, borderRadius: 10}} backdrop={false}  position={'top'} ref={'modal'}>
+                    <Text style={{}}>Modal on top</Text>
+                    <Button onPress={() => this.refs.modal.close()} title='close' />
+                </Modal>
             </View>
         )
     }
@@ -380,8 +388,7 @@ const style = StyleSheet.create({
         padding: 5,
         flexDirection: 'row',
         borderWidth: 0.5,
-        borderColor: '#fdad4f',
-        textAlign: 'center'
+        borderColor: '#fdad4f'
     },
     statusItemText: {
         lineHeight: 34,
