@@ -12,7 +12,7 @@ import {Icon} from 'native-base'
 
 import {filter} from '../../appData'
 
-import {material_filter, material_init, material_list_set} from '../../store/action/index'
+import {material_filter, material_init, material_list_set, tag_init} from '../../store/action/index'
 
 import {categories} from '../../coreData/meterial'
 
@@ -32,6 +32,7 @@ class Main extends Component {
 
     componentDidMount() {
         this.props.material_init()
+        this.props.tag_init()
         this.setState({cur: this.state.filter[0]})
     }
 
@@ -125,44 +126,12 @@ class Main extends Component {
             }
             return true
         }
+        const getSize = num => {
+            return Math.min((SCREEN_WIDTH / 4 - 16) / num, 19)
+        }
         return (
             <View style={style.wrap}>
-                <View style={[style.filter, {paddingLeft: 0, marginLeft: 12}]}>
-                    <ScrollView horizontal>
-                        {this.state.filter.map((filter, index) => (
-                            <TouchableOpacity onPress={() => this.setState({cur: filter})} key={index}>
-                                <View
-                                    style={[style.filterItem, filter.name ? {} : {display: 'none'}, this.state.cur.value === filter.value ? style.filterParentActive : {}]}>
-                                    <Text
-                                        style={[style.filterItemText, this.state.cur.value === filter.value ? style.filterParentActiveText : {}]}>{filter.name}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-                <View style={style.filter}>
-                    <TouchableOpacity onPress={reverse}>
-                        <View style={[style.filterItem]}>
-                            <Icon style={[style.filterItemText, style.swap, {fontSize: 19, paddingLeft: 18, paddingRight: 6}]} name="ios-swap"/>
-                        </View>
-                    </TouchableOpacity>
-                    <ScrollView horizontal>
-                        {this.state.filter.filter(({value}) => value === this.state.cur.value)[0].enum.map((filter, index) => (
-                            <TouchableOpacity onPress={() => toggleFilter(filter)} key={index}>
-                                <View style={[style.filterItem, {
-                                    paddingHorizontal: 0,
-                                    marginHorizontal: 12
-                                }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
-                                    <Text
-                                        style={[style.filterItemText, {
-                                            color: '#999',
-                                            fontSize: 19
-                                        }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
+                {/* status*/}
                 <View style={[style.statusWrap, isEmpty(this.state.curFilter) ? {display: 'none'} : {}]}>
                     <View style={style.statusDisplay}>
                         {this.state.statusExpended && (
@@ -172,11 +141,11 @@ class Main extends Component {
                                         <TouchableOpacity key={item.name} onPress={() => {
                                             removeCondition(key, item)
                                         }}>
-                                            <View style={{flexDirection: 'row', marginBottom: 15}}>
-                                                <Icon style={[style.statusDisplayText, {paddingRight: 6}]}
+                                            <View style={[style.statusItem, {paddingHorizontal: (SCREEN_WIDTH / 4 - (getSize(item.name.length + 1) * (item.name.length + 1) + 6)) / 2}]}>
+                                                <Icon style={[style.statusItemText, {paddingRight: 6}, {fontSize: getSize(item.name.length + 1)}]}
                                                       name="ios-remove-circle-outline"/>
                                                 <Text
-                                                    style={[style.statusDisplayText, {paddingRight: 12}]}>{item.name}</Text>
+                                                    style={[style.statusItemText, {fontSize: getSize(item.name.length + 1)}]}>{item.name}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     ))
@@ -224,12 +193,49 @@ class Main extends Component {
                         </View>
                     </View>
                 </View>
-                <View style={[{
-                    height: 4,
-                    width: SCREEN_WIDTH,
-                    backgroundColor: '#f2f2f2'
-                }]}/>
                 <ScrollView>
+                     {/*filter*/}
+                    <View style={[style.filter, {paddingLeft: 0, marginLeft: 12}]}>
+                        <ScrollView horizontal>
+                            {this.state.filter.map((filter, index) => (
+                                <TouchableOpacity onPress={() => this.setState({cur: filter})} key={index}>
+                                    <View
+                                        style={[style.filterItem, filter.name ? {} : {display: 'none'}, this.state.cur.value === filter.value ? style.filterParentActive : {}]}>
+                                        <Text
+                                            style={[style.filterItemText, this.state.cur.value === filter.value ? style.filterParentActiveText : {}]}>{filter.name}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    <View style={style.filter}>
+                        <ScrollView horizontal>
+                            <TouchableOpacity onPress={reverse}>
+                                <View style={[style.filterItem]}>
+                                    <Icon style={[style.filterItemText, style.swap, {fontSize: 19, paddingLeft: 18, paddingRight: 6}]} name="ios-swap"/>
+                                </View>
+                            </TouchableOpacity>
+                            {this.state.filter.filter(({value}) => value === this.state.cur.value)[0].enum.map((filter, index) => (
+                                <TouchableOpacity onPress={() => toggleFilter(filter)} key={index}>
+                                    <View style={[style.filterItem, {
+                                        paddingHorizontal: 0,
+                                        marginHorizontal: 12
+                                    }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
+                                        <Text
+                                            style={[style.filterItemText, {
+                                                fontSize: 19
+                                            }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    <View style={[{
+                        height: 4,
+                        width: SCREEN_WIDTH,
+                        backgroundColor: '#f2f2f2'
+                    }]}/>
+                     {/*list*/}
                     {Object.entries(this.props.list).map(([key, value]) => (
                         <View style={style.detailWrap} key={key}>
                             <View style={style.cardTitleWrap}>
@@ -272,14 +278,16 @@ class Main extends Component {
 
 const mapStateToProps = state => {
     return {
-        list: state.material.list
+        list: state.material.list,
+        tags: state.tag.list
     }
 }
 
 const mapDispatchToProps = {
     material_init,
     material_list_set,
-    material_filter
+    material_filter,
+    tag_init
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
@@ -315,10 +323,12 @@ const style = StyleSheet.create({
         color: COLOR.textLightNormal
     },
     filterParentActive: {
-        backgroundColor: COLOR.textLightNormal
+        // backgroundColor: COLOR.textLightNormal
     },
     filterParentActiveText: {
-        color: '#fff'
+        // color: '#fff'
+        fontSize: 22,
+        fontWeight: '900'
     },
     filterChildActive: {
         borderBottomWidth: 1,
@@ -326,7 +336,7 @@ const style = StyleSheet.create({
         borderRadius: 0
     },
     filterChildActiveText: {
-        color: COLOR.textNormal
+        color: COLOR.textLightNormal
     },
     icon: {
         width: 24,
@@ -349,17 +359,11 @@ const style = StyleSheet.create({
         alignItems: 'center'
     },
     statusWrap: {
-        marginHorizontal: 12,
-        marginTop: 15,
-        marginBottom: 20,
-        borderRadius: 3,
-        backgroundColor: COLOR.backgroundLighter
+        backgroundColor: COLOR.backgroundNormal
     },
     statusDisplay: {
-        paddingLeft: 10,
-        paddingRight: 2,
-        paddingTop: 20,
-        paddingBottom: 5
+        borderBottomWidth: 2,
+        borderBottomColor: '#fff'
     },
     statusDisplayText: {
         fontSize: 19,
@@ -368,7 +372,21 @@ const style = StyleSheet.create({
     },
     statusDisplayExtended: {
         flexDirection: 'row',
-        flexWrap: "wrap"
+        flexWrap: 'wrap'
+    },
+    statusItem: {
+        width: SCREEN_WIDTH / 4,
+        height: 45,
+        padding: 5,
+        flexDirection: 'row',
+        borderWidth: 0.5,
+        borderColor: '#fdad4f',
+        textAlign: 'center'
+    },
+    statusItemText: {
+        lineHeight: 34,
+        color: '#fff',
+        fontWeight: '500'
     },
     statusTagManage: {
         height: 40,
