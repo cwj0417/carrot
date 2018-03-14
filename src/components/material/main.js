@@ -256,7 +256,7 @@ class Main extends Component {
                                     renderItem={({item}) => (
                                         <View key={item.en} style={style.cardItemWrap}>
                                             <Img
-                                                onPress={() => this.props.navigation.navigate('Detail', {name: item.name})}
+                                                onPress={() => this.props.navigation.navigate('Detail', {item})}
                                                 style={style.cardImg} source={item.en}/>
                                             <View style={style.itemTextWrap}>
                                                 <Image style={[style.itemTextImg, {flex: 1}]}
