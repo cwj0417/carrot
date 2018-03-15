@@ -1,8 +1,13 @@
 import * as types from '../types'
 import {api_tag} from '../../api/index'
 
-export const tag_list_set = payload => ({
+const tag_list_set = payload => ({
     type: types.tag_list_set,
+    payload
+})
+
+const tag_list_push = payload => ({
+    type: types.tag_list_push,
     payload
 })
 
@@ -17,8 +22,14 @@ export const tag_init = () => {
     }
 }
 
-export const tag_filter = filter => {
+export const tag_create = (name, content) => {
     return dispatch => {
-        dispatch(tag_list_set())
+        api_tag.create(name, content)
+            .then(res => {
+                dispatch(tag_list_push(res))
+            }, err => {
+                // existed
+                return Promise.reject(err)
+            })
     }
 }

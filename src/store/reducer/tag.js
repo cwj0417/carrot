@@ -10,6 +10,12 @@ export default (state = {}, {type, payload}) => {
                 list: payload
             }
             break
+        case types.tag_list_push:
+            return {
+                ...state,
+                list: [...state.list, payload]
+            }
+            break
         default:
             return state
     }

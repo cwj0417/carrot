@@ -1,6 +1,17 @@
 import React, {Component} from 'react'
 
-import {FlatList, Image, ScrollView, StyleSheet, Text, TextInput, Button, TouchableOpacity, View} from 'react-native'
+import {
+    AlertIOS,
+    Button,
+    FlatList,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native'
 
 import {connect} from 'react-redux'
 
@@ -14,7 +25,7 @@ import {Icon} from 'native-base'
 
 import {filter} from '../../appData'
 
-import {material_filter, material_init, material_list_set, tag_init} from '../../store/action/index'
+import {material_filter, material_init, material_list_set, tag_init, tag_create} from '../../store/action/index'
 
 import {categories} from '../../coreData/meterial'
 
@@ -131,6 +142,20 @@ class Main extends Component {
         const getSize = num => {
             return Math.min((SCREEN_WIDTH / 4 - 16) / num, 19)
         }
+        const getCurrentTag = () => {
+            // return tag name or false when not matched
+            return false
+        }
+        const setNewTag = () => {
+            AlertIOS.prompt(
+                '新建标签',
+                '输入标签名',
+                tagName => {
+                    if (!getCurrentTag()) {
+                        this.props.tag_create(tagName, this.state.curFilter)
+                    }
+                })
+        }
         return (
             <View style={style.wrap}>
                 {/* status*/}
@@ -143,9 +168,11 @@ class Main extends Component {
                                         <TouchableOpacity key={item.name} onPress={() => {
                                             removeCondition(key, item)
                                         }}>
-                                            <View style={[style.statusItem, {paddingHorizontal: (SCREEN_WIDTH / 4 - (getSize(item.name.length + 1) * (item.name.length + 1) + 6)) / 2}]}>
-                                                <Icon style={[style.statusItemText, {paddingRight: 6}, {fontSize: getSize(item.name.length + 1)}]}
-                                                      name="ios-remove-circle-outline"/>
+                                            <View
+                                                style={[style.statusItem, {paddingHorizontal: (SCREEN_WIDTH / 4 - (getSize(item.name.length + 1) * (item.name.length + 1) + 6)) / 2}]}>
+                                                <Icon
+                                                    style={[style.statusItemText, {paddingRight: 6}, {fontSize: getSize(item.name.length + 1)}]}
+                                                    name="ios-remove-circle-outline"/>
                                                 <Text
                                                     style={[style.statusItemText, {fontSize: getSize(item.name.length + 1)}]}>{item.name}</Text>
                                             </View>
@@ -188,7 +215,8 @@ class Main extends Component {
                             <TextInput/>
                         </View>
                         <View style={{flex: 2}}>
-                            <Text style={[style.statusDisplayText, {fontSize: 16, flex: 1}]}>设为标签</Text>
+                            <Text onPress={setNewTag}
+                                  style={[style.statusDisplayText, {fontSize: 16, flex: 1}]}>设为标签</Text>
                         </View>
                         <TouchableOpacity onPress={() => this.refs.modal.open()}>
                             <View style={{flex: 1}}>
@@ -198,7 +226,7 @@ class Main extends Component {
                     </View>
                 </View>
                 <ScrollView>
-                     {/*filter*/}
+                    {/*filter*/}
                     <View style={[style.filter, {paddingLeft: 0, marginLeft: 12}]}>
                         <ScrollView horizontal>
                             {this.state.filter.map((filter, index) => (
@@ -216,7 +244,11 @@ class Main extends Component {
                         <ScrollView horizontal>
                             <TouchableOpacity onPress={reverse}>
                                 <View style={[style.filterItem]}>
-                                    <Icon style={[style.filterItemText, style.swap, {fontSize: 19, paddingLeft: 18, paddingRight: 6}]} name="ios-swap"/>
+                                    <Icon style={[style.filterItemText, style.swap, {
+                                        fontSize: 19,
+                                        paddingLeft: 18,
+                                        paddingRight: 6
+                                    }]} name="ios-swap"/>
                                 </View>
                             </TouchableOpacity>
                             {this.state.filter.filter(({value}) => value === this.state.cur.value)[0].enum.map((filter, index) => (
@@ -239,12 +271,12 @@ class Main extends Component {
                         width: SCREEN_WIDTH,
                         backgroundColor: '#f2f2f2'
                     }]}/>
-                     {/*list*/}
+                    {/*list*/}
                     {Object.entries(this.props.list).map(([key, value]) => (
                         <View style={style.detailWrap} key={key}>
                             <View style={style.cardTitleWrap}>
                                 <Text style={style.cardTitle}>{categories[key]}</Text>
-                                <Icon name="md-arrow-dropup"
+                                <Icon name='md-arrow-dropup'
                                       style={{fontSize: 18, paddingLeft: 8, color: COLOR.textLightNormal}}/>
                             </View>
                             <View style={style.cardWrap}>
@@ -275,9 +307,16 @@ class Main extends Component {
                         </View>
                     ))}
                 </ScrollView>
-                <Modal style={{width: SCREEN_WIDTH * 0.8, height: SCREEN_HEIGHT * 0.6, borderRadius: 10}} backdrop={false}  position={'top'} ref={'modal'}>
+                <Modal style={{width: SCREEN_WIDTH * 0.8, height: SCREEN_HEIGHT * 0.6, borderRadius: 10}}
+                       backdrop={false} position={'top'} ref={'modal'}>
+                    <Text>
+                        {JSON.stringify(this.state.curFilter)}
+                    </Text>
+                    <Text>
+                        {JSON.stringify(this.props.tags)}
+                    </Text>
                     <Text style={{}}>Modal on top</Text>
-                    <Button onPress={() => this.refs.modal.close()} title='close' />
+                    <Button onPress={() => this.refs.modal.close()} title='close'/>
                 </Modal>
             </View>
         )
@@ -295,7 +334,8 @@ const mapDispatchToProps = {
     material_init,
     material_list_set,
     material_filter,
-    tag_init
+    tag_init,
+    tag_create
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
