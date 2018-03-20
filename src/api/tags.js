@@ -17,5 +17,21 @@ export const api_tag = {
                         })
                 }
             })
+    },
+    delete (name) {
+        return new Promise(resolve => {
+            storage.getItem('tag')
+                .then(res => {
+                    let index = res.findIndex(each => each.name === name)
+                    if (index === -1) {
+                        resolve(res)
+                    } else {
+                        storage.setItem('tag', res.splice(index, 1))
+                            .then(suc => {
+                                resolve(res)
+                            })
+                    }
+                })
+        })
     }
 }

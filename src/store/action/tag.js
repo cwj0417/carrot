@@ -33,3 +33,12 @@ export const tag_create = (name, content) => {
             })
     }
 }
+
+export const tag_delete = (name) => {
+    return dispatch => {
+        api_tag.delete(name)
+            .then(res => {
+                dispatch(tag_list_set(res))
+            })
+    }
+}

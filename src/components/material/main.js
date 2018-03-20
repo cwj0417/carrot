@@ -25,7 +25,7 @@ import {Icon} from 'native-base'
 
 import {filter} from '../../appData'
 
-import {material_filter, material_init, material_list_set, tag_init, tag_create} from '../../store/action/index'
+import {material_filter, material_init, material_list_set, tag_init, tag_create, tag_delete} from '../../store/action/index'
 
 import {categories} from '../../coreData/meterial'
 
@@ -312,9 +312,14 @@ class Main extends Component {
                     <Text>
                         {JSON.stringify(this.state.curFilter)}
                     </Text>
-                    <Text>
-                        {JSON.stringify(this.props.tags)}
-                    </Text>
+                    {this.props.tags.map(tag => (
+                        <View key={tag.name}>
+                            <Text>{JSON.stringify(tag)}</Text>
+                            <TouchableOpacity onPress={() => this.props.tag_delete(tag.name)}>
+                                <Text>delete</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
                     <Text style={{}}>Modal on top</Text>
                     <Button onPress={() => this.refs.modal.close()} title='close'/>
                 </Modal>
@@ -335,7 +340,8 @@ const mapDispatchToProps = {
     material_list_set,
     material_filter,
     tag_init,
-    tag_create
+    tag_create,
+    tag_delete
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
