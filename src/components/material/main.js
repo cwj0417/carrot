@@ -18,6 +18,7 @@ import {
     material_filter,
     material_init,
     material_list_set,
+    state_set,
     tag_create,
     tag_delete,
     tag_init
@@ -31,8 +32,6 @@ class Main extends Component {
 
         this.state = {
             filter,
-            cur: '',
-            curFilter: {},
             statusExpended: true
         }
     }
@@ -40,13 +39,18 @@ class Main extends Component {
     componentDidMount() {
         this.props.material_init()
         this.props.tag_init()
-        this.setState({cur: this.state.filter[0]})
+        this.props.state_set('cur', this.state.filter[0])
     }
 
     static navigationOptions = () => {
         const search = txt => {
             console.warn(txt)
         }
+
+        const openModal = () => {
+            this.refs.modal.open()
+        }
+
         return {
             title: '食材',
             headerStyle: {
@@ -57,9 +61,11 @@ class Main extends Component {
             },
             headerTitle: (
                 <View style={style.headerTitle}>
-                    <View style={style.headerLeft}>
-                        <Image style={style.icon} source={require('../../assets/reset.png')}/>
-                    </View>
+                    <TouchableOpacity onPress={openModal}>
+                        <View style={style.headerLeft}>
+                            <Image style={style.icon} source={require('../../assets/reset.png')}/>
+                        </View>
+                    </TouchableOpacity>
                     <View style={style.headerMiddle}>
                         <View style={{
                             marginBottom: 10,
@@ -86,13 +92,13 @@ class Main extends Component {
     render() {
         const filterData = () => {
             setTimeout(() => {
-                this.props.material_filter(this.state.curFilter)
+                this.props.material_filter(this.props.curFilter)
             })
         }
         const toggleFilter = filter => {
-            let current = this.state.curFilter[this.state.cur.value] || []
+            let current = this.props.curFilter[this.props.cur.value] || []
             let res = []
-            for (let item of this.state.cur.enum) {
+            for (let item of this.props.cur.enum) {
                 let curHas = current.find(({name}) => name === item.name)
                 let targetHas = filter.name === item.name
                 if (curHas || targetHas) {
@@ -101,30 +107,29 @@ class Main extends Component {
                     }
                 }
             }
-            this.setState({curFilter: {...this.state.curFilter, [this.state.cur.value]: res}})
+            this.props.state_set('curFilter', {...this.props.curFilter, [this.props.cur.value]: res})
             filterData()
         }
         const reverse = () => {
             let reversed = []
-            if (this.state.curFilter[this.state.cur.value]) {
-                for (let item of this.state.cur.enum) {
-                    if (!this.state.curFilter[this.state.cur.value].find(({name}) => name === item.name)) {
+            if (this.props.curFilter[this.props.cur.value]) {
+                for (let item of this.props.cur.enum) {
+                    if (!this.props.curFilter[this.props.cur.value].find(({name}) => name === item.name)) {
                         reversed.push(item)
                     }
                 }
             } else {
-                reversed = this.state.cur.enum
+                reversed = this.props.cur.enum
             }
-            this.setState({curFilter: {...this.state.curFilter, [this.state.cur.value]: reversed}})
+            this.props.state_set('curFilter', {...this.props.curFilter, [this.props.cur.value]: reversed})
             filterData()
         }
         const removeCondition = (key, item) => {
-            this.setState({
-                curFilter: {
-                    ...this.state.curFilter,
-                    [key]: this.state.curFilter[key].filter(({name}) => name !== item.name)
-                }
-            })
+            this.props.state_set(
+                'curFilter', {
+                    ...this.props.curFilter,
+                    [key]: this.props.curFilter[key].filter(({name}) => name !== item.name)
+                })
             filterData()
         }
         const isEmpty = (filter) => {
@@ -146,19 +151,19 @@ class Main extends Component {
                 '输入标签名',
                 tagName => {
                     if (!getCurrentTag()) {
-                        this.props.tag_create(tagName, this.state.curFilter)
+                        this.props.tag_create(tagName, this.props.curFilter)
                     }
                 })
         }
         return (
             <View style={style.wrap}>
                 {/* status*/}
-                <View style={[style.statusWrap, isEmpty(this.state.curFilter) ? {display: 'none'} : {}]}>
+                <View style={[style.statusWrap, isEmpty(this.props.curFilter) ? {display: 'none'} : {}]}>
                     <View style={style.statusDisplay}>
                         {this.state.statusExpended && (
                             <View style={style.statusDisplayExtended}>
-                                {Object.keys(this.state.curFilter).map(key => {
-                                    return this.state.curFilter[key].map(item => (
+                                {Object.keys(this.props.curFilter).map(key => {
+                                    return this.props.curFilter[key].map(item => (
                                         <TouchableOpacity key={item.name} onPress={() => {
                                             removeCondition(key, item)
                                         }}>
@@ -176,8 +181,8 @@ class Main extends Component {
                             </View>
                         ) || (
                             <ScrollView horizontal style={style.statusDisplayExtended}>
-                                {Object.keys(this.state.curFilter).map(key => {
-                                    return this.state.curFilter[key].map(item => (
+                                {Object.keys(this.props.curFilter).map(key => {
+                                    return this.props.curFilter[key].map(item => (
                                         <View style={{flexDirection: 'row', marginBottom: 15}} key={item.name}>
                                             <TouchableOpacity onPress={() => {
                                                 removeCondition(key, item)
@@ -224,11 +229,11 @@ class Main extends Component {
                     <View style={[style.filter, {paddingLeft: 0, marginLeft: 12}]}>
                         <ScrollView horizontal>
                             {this.state.filter.map((filter, index) => (
-                                <TouchableOpacity onPress={() => this.setState({cur: filter})} key={index}>
+                                <TouchableOpacity onPress={() => this.props.state_set('cur', filter)} key={index}>
                                     <View
-                                        style={[style.filterItem, filter.name ? {} : {display: 'none'}, this.state.cur.value === filter.value ? style.filterParentActive : {}]}>
+                                        style={[style.filterItem, filter.name ? {} : {display: 'none'}, this.props.cur.value === filter.value ? style.filterParentActive : {}]}>
                                         <Text
-                                            style={[style.filterItemText, this.state.cur.value === filter.value ? style.filterParentActiveText : {}]}>{filter.name}</Text>
+                                            style={[style.filterItemText, this.props.cur.value === filter.value ? style.filterParentActiveText : {}]}>{filter.name}</Text>
                                     </View>
                                 </TouchableOpacity>
                             ))}
@@ -245,16 +250,16 @@ class Main extends Component {
                                     }]} name="ios-swap"/>
                                 </View>
                             </TouchableOpacity>
-                            {this.state.filter.filter(({value}) => value === this.state.cur.value)[0].enum.map((filter, index) => (
+                            {this.state.filter.filter(({value}) => value === this.props.cur.value)[0].enum.map((filter, index) => (
                                 <TouchableOpacity onPress={() => toggleFilter(filter)} key={index}>
                                     <View style={[style.filterItem, {
                                         paddingHorizontal: 0,
                                         marginHorizontal: 12
-                                    }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
+                                    }, this.props.cur && this.props.curFilter[this.props.cur.value] && this.props.curFilter[this.props.cur.value].find(({name}) => name === filter.name) ? style.filterChildActive : {}]}>
                                         <Text
                                             style={[style.filterItemText, {
                                                 fontSize: 19
-                                            }, this.state.cur && this.state.curFilter[this.state.cur.value] && this.state.curFilter[this.state.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
+                                            }, this.props.cur && this.props.curFilter[this.props.cur.value] && this.props.curFilter[this.props.cur.value].find(({name}) => name === filter.name) ? style.filterChildActiveText : {}]}>{filter.name}</Text>
                                     </View>
                                 </TouchableOpacity>
                             ))}
@@ -269,7 +274,7 @@ class Main extends Component {
                         <List key={key} cat={key} value={value} navigation={this.props.navigation}/>
                     ))}
                 </ScrollView>
-                <Modal style={{width: SCREEN_WIDTH * 0.8, height: SCREEN_HEIGHT * 0.6, borderRadius: 10}}
+                <Modal style={{width: SCREEN_WIDTH, height: SCREEN_HEIGHT, opacity: 0.8}}
                        backdrop={false} position={'top'} ref={'modal'}>
                     <Text>
                         {JSON.stringify(this.state.curFilter)}
@@ -293,7 +298,9 @@ class Main extends Component {
 const mapStateToProps = state => {
     return {
         list: state.material.list,
-        tags: state.tag.list
+        tags: state.tag.list,
+        cur: state.state.cur,
+        curFilter: state.state.curFilter
     }
 }
 
@@ -303,7 +310,8 @@ const mapDispatchToProps = {
     material_filter,
     tag_init,
     tag_create,
-    tag_delete
+    tag_delete,
+    state_set
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
