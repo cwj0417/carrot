@@ -12,6 +12,10 @@ import List from './list'
 
 import Filter from './filter'
 
+import ExpendedStatus from './expendedStatus'
+
+import Status from './status'
+
 import {Icon} from 'native-base'
 
 import {filter} from '../../appData'
@@ -97,23 +101,11 @@ class Main extends Component {
                 this.props.material_filter(this.props.curFilter)
             })
         }
-
-        const removeCondition = (key, item) => {
-            this.props.state_set(
-                'curFilter', {
-                    ...this.props.curFilter,
-                    [key]: this.props.curFilter[key].filter(({name}) => name !== item.name)
-                })
-            filterData()
-        }
         const isEmpty = (filter) => {
             for (let key in filter) {
                 if (filter[key].length) return false
             }
             return true
-        }
-        const getSize = num => {
-            return Math.min((SCREEN_WIDTH / 4 - 16) / num, 19)
         }
         const getCurrentTag = () => {
             // return tag name or false when not matched
@@ -135,41 +127,9 @@ class Main extends Component {
                 <View style={[style.statusWrap, isEmpty(this.props.curFilter) ? {display: 'none'} : {}]}>
                     <View style={style.statusDisplay}>
                         {this.state.statusExpended && (
-                            <View style={style.statusDisplayExtended}>
-                                {Object.keys(this.props.curFilter).map(key => {
-                                    return this.props.curFilter[key].map(item => (
-                                        <TouchableOpacity key={item.name} onPress={() => {
-                                            removeCondition(key, item)
-                                        }}>
-                                            <View
-                                                style={[style.statusItem, {paddingHorizontal: (SCREEN_WIDTH / 4 - (getSize(item.name.length + 1) * (item.name.length + 1) + 6)) / 2}]}>
-                                                <Icon
-                                                    style={[style.statusItemText, {paddingRight: 6}, {fontSize: getSize(item.name.length + 1)}]}
-                                                    name="ios-remove-circle-outline"/>
-                                                <Text
-                                                    style={[style.statusItemText, {fontSize: getSize(item.name.length + 1)}]}>{item.name}</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    ))
-                                })}
-                            </View>
+                            <ExpendedStatus />
                         ) || (
-                            <ScrollView horizontal style={style.statusDisplayExtended}>
-                                {Object.keys(this.props.curFilter).map(key => {
-                                    return this.props.curFilter[key].map(item => (
-                                        <View style={{flexDirection: 'row', marginBottom: 15}} key={item.name}>
-                                            <TouchableOpacity onPress={() => {
-                                                removeCondition(key, item)
-                                            }}>
-                                                <Icon style={[style.statusDisplayText, {paddingRight: 4}]}
-                                                      name="ios-remove-circle-outline"/>
-                                            </TouchableOpacity>
-                                            <Text
-                                                style={[style.statusDisplayText, {paddingRight: 8}]}>{item.name}</Text>
-                                        </View>
-                                    ))
-                                })}
-                            </ScrollView>
+                            <Status />
                         )}
                     </View>
                     <View style={style.statusTagManage}>
@@ -281,29 +241,8 @@ const style = StyleSheet.create({
     statusWrap: {
         backgroundColor: COLOR.backgroundNormal
     },
-    statusDisplay: {
-        borderBottomWidth: 2,
-        borderBottomColor: '#fff'
-    },
     statusDisplayText: {
         fontSize: 19,
-        color: '#fff',
-        fontWeight: '500'
-    },
-    statusDisplayExtended: {
-        flexDirection: 'row',
-        flexWrap: 'wrap'
-    },
-    statusItem: {
-        width: SCREEN_WIDTH / 4,
-        height: 45,
-        padding: 5,
-        flexDirection: 'row',
-        borderWidth: 0.5,
-        borderColor: '#fdad4f'
-    },
-    statusItemText: {
-        lineHeight: 34,
         color: '#fff',
         fontWeight: '500'
     },
