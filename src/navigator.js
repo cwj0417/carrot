@@ -6,9 +6,9 @@ import Material from './components/material/index'
 
 import Recipe from './components/recipe/index'
 
-import {Text, Image} from 'react-native'
+import {Text, Image, View} from 'react-native'
 
-export default TabNavigator({
+const Tab = TabNavigator({
     Material: {
         screen: Material,
         navigationOptions: {
@@ -50,3 +50,5 @@ export default TabNavigator({
         }
     }
 })
+
+export default Tab
