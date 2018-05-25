@@ -6,6 +6,8 @@ import Material from './components/material/index'
 
 import Recipe from './components/recipe/index'
 
+import Info from './components/info/index'
+
 import {Text, Image, View} from 'react-native'
 
 const Tab = TabNavigator({
@@ -40,7 +42,7 @@ const Tab = TabNavigator({
     },
     Info: {
         screen: () => (
-            <Text>我的</Text>
+            <Info></Info>
         ),
         navigationOptions: {
             tabBarLabel: '我的',
